@@ -1,4 +1,4 @@
-/* ===== LUMIS MUSEUM — HLAVNI JS ===== */
+/* ===== LUMIS MUSEUM — HLAVNI JS  ===== */
 
 /* kod se spusti az po nacteni cele stranky */
 document.addEventListener('DOMContentLoaded', () => {
