@@ -402,4 +402,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-fetch("../data/expozice.csv")
+
