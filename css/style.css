@@ -1,5 +1,5 @@
-
-/* ===== GLOBAL STYLES — LUMIS MUSEUM===== */
+/* Student si tu nastavil zakladni barvy celeho webu */
+/* ===== GLOBAL STYLES — LUMIS MUSEUM ===== */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
 
@@ -919,4 +919,43 @@ body { padding: 2rem; }
   font-size: 0.82rem; 
   margin-top: 0.75rem; 
   letter-spacing: 0.08em; 
+}
+/* ===== FAQ ===== */
+
+/* cela FAQ sekce */
+#faq {
+  padding: 6rem 0;
+  background: var(--cream);
+}
+
+/* box ktery drzi vsechny otazky */
+.faq-box {
+  max-width: 820px;
+  margin: 0 auto;
+  background: var(--warm-white);
+  border: 1px solid var(--light-stone);
+}
+
+/* jedna otazka s odpovedi */
+.faq-item {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--light-stone);
+}
+
+/* posledni otazka uz nepotrebuje spodni caru */
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+/* nadpis otazky */
+.faq-item h3 {
+  font-size: 1.25rem;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+}
+
+/* odpoved */
+.faq-item p {
+  margin: 0;
+  color: var(--warm-gray);
 }
