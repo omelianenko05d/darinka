@@ -83,6 +83,99 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('.fade-in').forEach(el => fadeObserver.observe(el));
 
 
+  /* ===== DYNAMICKE EXPOZICE Z CSV ===== */
+
+  /* jednoducha funkce na cteni CSV radku
+     CSV je tabulka ulozena jako text, kde jsou hodnoty oddelene carkou */
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let value = '';
+    let inQuotes = false;
+
+    /* prochazim kazdy znak, protoze popis muze obsahovat carku v uvozovkach */
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const nextChar = text[i + 1];
+
+      /* kdyz jsou dve uvozovky za sebou, znamena to jedna uvozovka v textu */
+      if (char === '"' && nextChar === '"') {
+        value += '"';
+        i++;
+      } else if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        row.push(value.trim());
+        value = '';
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (value || row.length) {
+          row.push(value.trim());
+          rows.push(row);
+          row = [];
+          value = '';
+        }
+      } else {
+        value += char;
+      }
+    }
+
+    if (value || row.length) {
+      row.push(value.trim());
+      rows.push(row);
+    }
+
+    const headers = rows.shift();
+
+    /* z radku udelam objekty, aby se s tim lepe pracovalo */
+    return rows.map(rowData => {
+      const item = {};
+      headers.forEach((header, index) => {
+        item[header] = rowData[index] || '';
+      });
+      return item;
+    });
+  }
+
+  /* tato funkce vytvori HTML kartu pro jednu expozici */
+  function createExpoziceCard(expozice) {
+    return `
+      <div class="col-lg-4 col-md-6 fade-in">
+        <div class="exhibition-card">
+          <img src="${expozice.obrazek}" alt="${expozice.nazev}" loading="lazy" />
+          <div class="exhibition-body">
+            <span class="exhibition-tag">${expozice.kategorie}</span>
+            <h3>${expozice.nazev}</h3>
+            <p>${expozice.popis}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* nacte CSV soubor a vypise expozice na stranku */
+  function loadExpozice() {
+    const list = byId('expozice-list');
+    if (!list) return;
+
+    fetch('data/expozice.csv')
+      .then(response => response.text())
+      .then(text => {
+        const expozice = parseCSV(text);
+
+        /* vsechny karty se vlozi do divu v HTML */
+        list.innerHTML = expozice.map(createExpoziceCard).join('');
+
+        /* nove vytvorene karty se taky napoji na fade-in animaci */
+        list.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+      })
+      .catch(() => {
+        list.innerHTML = '<div class="col-12"><p>Expozice se nepodařilo načíst.</p></div>';
+      });
+  }
+
+  loadExpozice();
+
+
   /* ===== COUNTDOWN ===== */
 
   /* datum a cas, do ktereho se odpocitava */
@@ -308,3 +401,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+fetch("data/expozice.csv")
