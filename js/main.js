@@ -55,6 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('section[id]').forEach(section => sectionObserver.observe(section));
 
 
+
+ 
+
+
+
+
+
   /* ===== ANIMACE PRI SCROLLU ===== */
 
   /* sleduje prvky, ktere se maji objevit animaci */
@@ -370,70 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-
-
-/* ===== EXPOZICE ===== */
-
-/* data expozic */
-const expozice = [
-  {
-    nazev: "Světlo a stín",
-    popis: "Barokní mistři z evropských sbírek.",
-    kategorie: "Barokní umění",
-    obrazek: "../obrazky/vystava1.avif"
-  },
-
-  {
-    nazev: "Forma a prostor",
-    popis: "Moderní sochařství a instalace.",
-    kategorie: "Moderní sochařství",
-    obrazek: "../obrazky/vystava2.avif"
-  },
-
-  {
-    nazev: "Od gotiky k moderně",
-    popis: "Historická sbírka evropského umění.",
-    kategorie: "Stálá sbírka",
-    obrazek: "../obrazky/vystava3.avif"
-  }
-];
-
-/* misto kam se vlozi expozice */
-const expoBox = byId('expo-box');
-
-/* vytvori karty expozic */
-if (expoBox) {
-
-  expozice.forEach(item => {
-
-    expoBox.innerHTML += `
-
-      <div class="col-lg-4 col-md-6">
-
-        <div class="expo-card">
-
-          <img src="${item.obrazek}" alt="${item.nazev}" class="img-fluid">
-
-          <div class="p-3">
-
-            <p class="text-gold">${item.kategorie}</p>
-
-            <h3>${item.nazev}</h3>
-
-            <p>${item.popis}</p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    `;
-  });
-}
-
-
-
   /* ===== PLYNULE POSOUVANI ===== */
 
   /* vybere vsechny odkazy, ktere vedou na cast stranky */
@@ -465,3 +408,4 @@ if (expoBox) {
     });
   });
 });
+
