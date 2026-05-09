@@ -959,3 +959,37 @@ body { padding: 2rem; }
   margin: 0;
   color: var(--warm-gray);
 }
+
+/* zluty napis premiera jen u prvni vystavy */
+.premiere {
+  color: var(--gold);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+}
+
+.image-box{
+  position: relative;
+}
+
+.premiere{
+  position:absolute;
+  left:0;
+  bottom:0;
+  background: var(--gold);
+  color:white;
+  padding:0.6rem 1rem;
+  font-size:0.7rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+
+.expo-date{
+  color: var(--gold);
+  font-size:0.7rem;
+  letter-spacing:0.12em;
+  margin-bottom:0.8rem;
+  text-transform:uppercase;
+}
+
