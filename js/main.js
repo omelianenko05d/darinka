@@ -159,8 +159,8 @@ Světlo a stín,"Přelomová výstava představující nejvýznamnější barokn
 Forma a prostor,"Moderní a současné sochařství v dialogu s architekturou muzea. Interaktivní instalace pozývají k fyzické účasti.",Moderní sochařství, obrazky/vystava2.avif
 Od gotiky k moderně,"Chronologická procházka sedmi staletími českého a středoevropského umění. Ikony naší národní kulturní paměti.",Stálá sbírka, obrazky/vystava3.avif
 Objektiv svědka,"Dokumentární fotografie 20. století a svědectví o zlomových okamžicích dějin.",Fotografie, obrazky/vystava4.avif
-Poklady starověkého Egypta,"Unikátní kolekce egyptských artefaktů zapůjčená z Káhirského muzea.",Archeologie, (../obrazky/vystava5.avif)
-Portréty identity,"Mezinárodní skupinová výstava zkoumá témata identity, původu a přináležitosti.",Současné umění, (../obrazky/vystava6.avif)`;
+Poklady starověkého Egypta,"Unikátní kolekce egyptských artefaktů zapůjčená z Káhirského muzea.",Archeologie, ../obrazky/vystava5.avif
+Portréty identity,"Mezinárodní skupinová výstava zkoumá témata identity, původu a přináležitosti.",Současné umění, ./obrazky/vystava6.avif`;
 
   /* vypise expozice na stranku */
   function showExpozice(csvText) {
