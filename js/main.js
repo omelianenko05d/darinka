@@ -1,4 +1,4 @@
-/* ===== LUMIS MUSEUM — HLAVNI JS ===== */
+
 
 /* kod se spusti az po nacteni cele stranky */
 document.addEventListener('DOMContentLoaded', () => {
@@ -137,15 +137,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* tato funkce vytvori HTML kartu pro jednu expozici */
-  function createExpoziceCard(expozice) {
+  function createExpoziceCard(expozice, index) {
     return `
       <div class="col-lg-4 col-md-6 fade-in">
         <div class="exhibition-card">
-          <img src="${expozice.obrazek}" alt="${expozice.nazev}" loading="lazy" />
+
+          <div class="image-box">
+
+            <img src="${expozice.obrazek.trim()}" alt="${expozice.nazev}" loading="lazy" />
+
+            ${
+              index === 0
+                ? '<span class="premiere">PREMIÉRA</span>'
+                : ''
+            }
+
+          </div>
+
           <div class="exhibition-body">
+
+            
+
             <span class="exhibition-tag">${expozice.kategorie}</span>
+
             <h3>${expozice.nazev}</h3>
+
             <p>${expozice.popis}</p>
+
           </div>
         </div>
       </div>
@@ -170,7 +188,7 @@ Portréty identity,"Mezinárodní skupinová výstava zkoumá témata identity, 
     const expozice = parseCSV(csvText);
 
     /* vsechny karty se vlozi do divu v HTML */
-    list.innerHTML = expozice.map(createExpoziceCard).join('');
+    list.innerHTML = expozice.map((item, index) => createExpoziceCard(item, index)).join('');
 
     /* nove vytvorene karty se taky napoji na fade-in animaci */
     list.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
