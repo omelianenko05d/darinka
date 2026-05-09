@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = byId('expozice-list');
     if (!list) return;
 
-    fetch('data/expozice.csv')
+    fetch('../data/expozice.csv')
       .then(response => response.text())
       .then(text => {
         const expozice = parseCSV(text);
