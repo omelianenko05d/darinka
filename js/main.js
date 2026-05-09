@@ -55,13 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('section[id]').forEach(section => sectionObserver.observe(section));
 
 
-
- 
-
-
-
-
-
   /* ===== ANIMACE PRI SCROLLU ===== */
 
   /* sleduje prvky, ktere se maji objevit animaci */
@@ -159,24 +152,42 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  /* nacte CSV soubor a vypise expozice na stranku */
-  function loadExpozice() {
+  /* zalozni CSV primo v JavaScriptu
+     diky tomu budou expozice fungovat i kdyz prohlizec zablokuje fetch */
+  const zalozniCSV = `nazev,popis,kategorie,obrazek
+Světlo a stín,"Přelomová výstava představující nejvýznamnější barokní mistry z evropských sbírek. Více než 80 originálních děl.",Barokní umění,obrazky/vystava1.avif
+Forma a prostor,"Moderní a současné sochařství v dialogu s architekturou muzea. Interaktivní instalace pozývají k fyzické účasti.",Moderní sochařství,obrazky/vystava2.avif
+Od gotiky k moderně,"Chronologická procházka sedmi staletími českého a středoevropského umění. Ikony naší národní kulturní paměti.",Stálá sbírka,obrazky/vystava3.avif
+Objektiv svědka,"Dokumentární fotografie 20. století a svědectví o zlomových okamžicích dějin.",Fotografie,obrazky/vystava4.avif
+Poklady starověkého Egypta,"Unikátní kolekce egyptských artefaktů zapůjčená z Káhirského muzea.",Archeologie,obrazky/vystava5.avif
+Portréty identity,"Mezinárodní skupinová výstava zkoumá témata identity, původu a přináležitosti.",Současné umění,obrazky/vystava6.avif`;
+
+  /* vypise expozice na stranku */
+  function showExpozice(csvText) {
     const list = byId('expozice-list');
     if (!list) return;
 
+    const expozice = parseCSV(csvText);
+
+    /* vsechny karty se vlozi do divu v HTML */
+    list.innerHTML = expozice.map(createExpoziceCard).join('');
+
+    /* nove vytvorene karty se taky napoji na fade-in animaci */
+    list.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+  }
+
+  /* nacte CSV soubor z data/expozice.csv
+     na GitHub Pages to funguje, protoze GitHub Pages je server */
+  function loadExpozice() {
     fetch('../data/expozice.csv')
-      .then(response => response.text())
-      .then(text => {
-        const expozice = parseCSV(text);
-
-        /* vsechny karty se vlozi do divu v HTML */
-        list.innerHTML = expozice.map(createExpoziceCard).join('');
-
-        /* nove vytvorene karty se taky napoji na fade-in animaci */
-        list.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+      .then(response => {
+        if (!response.ok) throw new Error('CSV se nenaslo');
+        return response.text();
       })
+      .then(text => showExpozice(text))
       .catch(() => {
-        list.innerHTML = '<div class="col-12"><p>Expozice se nepodařilo načíst.</p></div>';
+        /* kdyz CSV nepujde nacist, pouzije se zalozni CSV nahore */
+        showExpozice(zalozniCSV);
       });
   }
 
@@ -408,4 +419,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
