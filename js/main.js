@@ -311,97 +311,159 @@ Portréty identity,"Mezinárodní skupinová výstava zkoumá témata identity, 
 
   /* ===== VSTUPENKY ===== */
 
+  /*
+    PHP soubor ../php/tickets.php bude fungovat jen na serveru s PHP.
+    Na GitHub Pages PHP nebezi, proto je tady i JS zaloha pres localStorage.
+  */
+  const ticketsApiUrl = '../php/tickets.php';
+
   /* ceny vstupenek podle typu */
-  const prices = { 
-    'Dospělí': 220, 
-    'Student': 150, 
-    'Senior': 140, 
-    'Rodina': 480, 
-    'Dítě': 0 
+  const prices = {
+    'Dospělí': 220,
+    'Student': 150,
+    'Senior': 140,
+    'Rodina': 480,
+    'Dítě': 0
   };
 
-  /* sem se ulozi vybrana vstupenka */
-  let selectedTicket = null;
+  let selectedTicket = 'Dospělí';
 
-  /* prepocita cenu objednavky */
-  function updateOrderSummary() {
+  function setTicketMessage(message, type = 'info') {
+    const messageEl = byId('ticket-message');
+    if (!messageEl) return;
 
-    /* typ vstupenky z formulare */
-    const type = byId('modal-type')?.value;
+    messageEl.textContent = message;
+    messageEl.className = `ticket-message ${type}`;
+  }
 
-    /* pocet vstupenek */
+  function getTicketFormData() {
+    const type = byId('modal-type')?.value || 'Dospělí';
     const quantity = Number(byId('modal-qty')?.value || 1);
+    const price = prices[type] || 0;
 
-    /* celkova cena */
-    const total = (prices[type] || 0) * quantity;
+    return {
+      id: `LM-${Date.now()}`,
+      name: byId('modal-name')?.value.trim() || '',
+      email: byId('modal-email')?.value.trim() || '',
+      date: byId('modal-date')?.value || '',
+      time: byId('modal-time')?.value || '',
+      type,
+      quantity,
+      price,
+      total: price * quantity,
+      createdAt: new Date().toISOString()
+    };
+  }
 
-    /* misto, kam se zapise cena */
-    const totalEl = byId('order-total');
+  function updateOrderSummary() {
+    const data = getTicketFormData();
 
-    if (totalEl) {
-      totalEl.textContent = `${total.toLocaleString('cs-CZ')} Kč`;
+    byId('modal-ticket-type') && (byId('modal-ticket-type').textContent = data.type);
+    byId('modal-ticket-price') && (byId('modal-ticket-price').textContent = `${data.price.toLocaleString('cs-CZ')} Kč / ks`);
+    byId('order-total') && (byId('order-total').textContent = `${data.total.toLocaleString('cs-CZ')} Kč`);
+  }
+
+  function saveTicketLocally(ticket) {
+    const savedTickets = JSON.parse(localStorage.getItem('lumisTickets') || '[]');
+    savedTickets.push(ticket);
+    localStorage.setItem('lumisTickets', JSON.stringify(savedTickets));
+  }
+
+  async function saveTicket(ticket) {
+    try {
+      const response = await fetch(ticketsApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ticket)
+      });
+
+      if (!response.ok) throw new Error('PHP endpoint neodpověděl správně.');
+
+      return await response.json();
+    } catch (error) {
+      /* GitHub Pages neumí PHP, proto se objednávka uloží aspoň v prohlížeči. */
+      saveTicketLocally(ticket);
+      return {
+        ok: true,
+        fallback: true,
+        message: 'Objednávka je uložená v prohlížeči, protože PHP tady neběží.'
+      };
     }
   }
 
-  /* kliknuti na kartu vstupenky */
+  function resetTicketForm() {
+    byId('modal-name') && (byId('modal-name').value = '');
+    byId('modal-email') && (byId('modal-email').value = '');
+    byId('modal-date') && (byId('modal-date').value = '');
+    byId('modal-qty') && (byId('modal-qty').value = 1);
+    setTicketMessage('');
+    updateOrderSummary();
+  }
+
   $$('.ticket-card').forEach(card => {
     card.addEventListener('click', () => {
-
-      /* odstrani oznaceni ze vsech karet */
       $$('.ticket-card').forEach(item => item.classList.remove('selected-ticket'));
-
-      /* oznaci kliknutou kartu */
       card.classList.add('selected-ticket');
 
-      /* ulozi typ vstupenky */
-      selectedTicket = card.dataset.type;
+      selectedTicket = card.dataset.type || 'Dospělí';
+      byId('modal-type') && (byId('modal-type').value = selectedTicket);
 
-      /* zapise info do modalu */
-      byId('modal-ticket-type').textContent = card.dataset.type;
-      byId('modal-ticket-price').textContent = `${card.dataset.price} Kč`;
-      byId('modal-type').value = card.dataset.type;
-
-      /* prepocita cenu */
       updateOrderSummary();
     });
   });
 
-  /* kdyz se zmeni typ vstupenky */
-  byId('modal-type')?.addEventListener('change', updateOrderSummary);
+  byId('modal-type')?.addEventListener('change', () => {
+    selectedTicket = byId('modal-type').value;
+    updateOrderSummary();
+  });
 
-  /* kdyz se zmeni pocet vstupenek */
-  byId('modal-qty')?.addEventListener('change', updateOrderSummary);
+  byId('modal-qty')?.addEventListener('input', updateOrderSummary);
+  byId('modal-date')?.addEventListener('change', () => setTicketMessage(''));
 
-  /* pred otevrenim modalu se nastavi cena */
   $$('[data-bs-target="#ticketModal"]').forEach(button => {
     button.addEventListener('click', () => {
-      if (selectedTicket) {
-        byId('modal-type').value = selectedTicket;
-      }
-
+      byId('modal-type') && (byId('modal-type').value = selectedTicket);
+      setTicketMessage('');
       updateOrderSummary();
     });
   });
 
-  /* potvrzeni nakupu */
-  byId('confirm-purchase')?.addEventListener('click', () => {
+  byId('confirm-purchase')?.addEventListener('click', async () => {
+    const ticket = getTicketFormData();
 
-    /* vezme jmeno a email z formulare */
-    const name = byId('modal-name')?.value.trim();
-    const email = byId('modal-email')?.value.trim();
-
-    /* kdyz neni vyplneno jmeno nebo email */
-    if (!name || !email) {
-      alert('Prosím vyplňte jméno a e-mail.');
+    if (!ticket.name || !ticket.email || !ticket.date || !ticket.time) {
+      setTicketMessage('Prosím vyplňte jméno, e-mail, datum a čas návštěvy.', 'error');
       return;
     }
 
-    /* zavre bootstrap modal */
+    if (!ticket.email.includes('@')) {
+      setTicketMessage('Zadejte platný e-mail.', 'error');
+      return;
+    }
+
+    setTicketMessage('Ukládám objednávku...', 'info');
+
+    const result = await saveTicket(ticket);
+
+    if (!result.ok) {
+      setTicketMessage('Objednávku se nepodařilo uložit. Zkuste to prosím znovu.', 'error');
+      return;
+    }
+
     bootstrap.Modal.getInstance(byId('ticketModal'))?.hide();
 
-    /* po chvilce ukaze potvrzeni */
     setTimeout(() => {
-      alert('Děkujeme za nákup! Vstupenky vám zašleme na e-mail.');
+      alert(
+        `Děkujeme za nákup!\n\n` +
+        `Číslo objednávky: ${ticket.id}\n` +
+        `Typ: ${ticket.type}\n` +
+        `Počet: ${ticket.quantity}\n` +
+        `Celkem: ${ticket.total.toLocaleString('cs-CZ')} Kč\n\n` +
+        (result.fallback
+          ? 'Poznámka: Na GitHub Pages se objednávka ukládá jen do prohlížeče, protože PHP tam neběží.'
+          : 'Objednávka byla uložena přes PHP.')
+      );
+      resetTicketForm();
     }, 300);
   });
 
