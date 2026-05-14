@@ -150,7 +150,7 @@
         <p class="text-muted-dark">Načítám expozice...</p>
       </div>
     </div>
-    <div id="expozice-list" class="row g-4">
+    <div id="expozice-list" class="row g-4"> <!--pomoci toho me funguje csv, jsem pripojila k js-->
   </div>
 </section>
 
@@ -553,9 +553,17 @@
           </div>
           <div class="col-12">
             <div class="order-box">
-              <span class="order-label">Celková cena</span>
-              <span id="order-total" class="order-price">220 Kč</span>
+              <div>
+                <span class="order-label">Vybraná vstupenka</span>
+                <strong id="modal-ticket-type">Dospělí</strong>
+                <span id="modal-ticket-price">220 Kč</span>
+              </div>
+              <div class="text-end">
+                <span class="order-label">Celková cena</span>
+                <span id="order-total" class="order-price">220 Kč</span>
+              </div>
             </div>
+            <p id="ticket-message" class="ticket-message" aria-live="polite"></p>
           </div>
         </div>
       </div>
