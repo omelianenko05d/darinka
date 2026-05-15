@@ -359,10 +359,7 @@ a { text-decoration: none; color: inherit; /* transition dela plynule animace */
 .exhibition-card:hover img { filter: saturate(1); transform: scale(1.02); }
 
 .exhibition-/* Nastaveni cele stranky */
-.exhibition-content {
-  padding: 1.5rem;      /* ochranné pásmo */
-  text-align: center;   /* text doprostřed */
-}
+body { padding: 1.5rem; }
 
 .exhibition-tag {
   font-size: 0.62rem;
