@@ -368,7 +368,7 @@ body { padding: 1.5rem; }
   color: var(--gold);
   margin-bottom: 0.5rem;
   display: block;
-  padding: auto;
+ 
 }
 
 .exhibition-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
